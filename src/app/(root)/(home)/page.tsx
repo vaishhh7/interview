@@ -11,9 +11,12 @@ import MeetingModal from "@/components/MeetingModal";
 import LoaderUI from "@/components/LoaderUI";
 import { Loader2Icon } from "lucide-react";
 import MeetingCard from "@/components/MeetingCard";
+import { useUser } from "@clerk/nextjs";
+import LandingPage from "@/components/LandingPage";
 
 export default function Home() {
   const router = useRouter();
+  const { user, isLoaded } = useUser();
 
   const { isInterviewer, isCandidate, isLoading } = useUserRole();
   const interviews = useQuery(api.interviews.getMyInterviews);
@@ -35,13 +38,15 @@ export default function Home() {
     }
   };
 
-  if (isLoading) return <LoaderUI />;
+  if (!isLoaded || (user && isLoading)) return <LoaderUI />;
+
+  if (!user) return <LandingPage />;
 
   return (
     <div className="container max-w-7xl mx-auto p-6">
       {/* WELCOME SECTION */}
       <div className="rounded-lg bg-card p-6 border shadow-sm mb-10">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold text-primary">
           Welcome back!
         </h1>
         <p className="text-muted-foreground mt-2">
